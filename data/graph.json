@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T16:50:15.363Z",
+  "generatedAt": "2026-03-21T23:23:07.538Z",
   "meta": {
     "org": "docktail",
     "repoCount": 2,
@@ -1029,7 +1029,8 @@
           "source": "inventory-service",
           "target": "order-service",
           "label": "calls",
-          "animated": true
+          "animated": true,
+          "markerEnd": "arrow"
         }
       ]
     },
@@ -2282,6 +2283,103 @@
           "animated": false
         }
       ]
+    },
+    "containerDiagram": {
+      "nodes": [
+        {
+          "id": "group:commerce",
+          "type": "group",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "data": {
+            "label": "commerce"
+          },
+          "style": {
+            "width": 360,
+            "height": 560,
+            "backgroundColor": "rgba(55,65,81,0.3)",
+            "borderColor": "#374151",
+            "borderRadius": 8
+          }
+        },
+        {
+          "id": "order-service",
+          "type": "serviceNode",
+          "position": {
+            "x": 60,
+            "y": 60
+          },
+          "parentId": "group:commerce",
+          "extent": "parent",
+          "data": {
+            "label": "Order Service",
+            "name": "Order Service",
+            "repoName": "order-service",
+            "repoUrl": "https://github.com/docktail/order-service",
+            "language": "Java",
+            "summary": "Accepts order creation requests via REST, persists to PostgreSQL, and publishes order.created events to Kafka",
+            "endpoints": [
+              {
+                "method": "POST",
+                "path": "/api/v1/orders",
+                "inputType": "CreateOrderRequest",
+                "outputType": "ResponseEntity<OrderResponse>"
+              },
+              {
+                "method": "GET",
+                "path": "/api/v1/orders/{id}",
+                "outputType": "ResponseEntity<OrderResponse>"
+              },
+              {
+                "method": "GET",
+                "path": "/api/v1/orders"
+              },
+              {
+                "method": "PATCH",
+                "path": "/api/v1/orders/{id}/status",
+                "inputType": "UpdateOrderStatusRequest",
+                "outputType": "ResponseEntity<OrderResponse>"
+              }
+            ],
+            "serviceType": "service",
+            "domain": "commerce",
+            "tags": [
+              "rest",
+              "kafka-producer",
+              "postgres",
+              "critical"
+            ]
+          }
+        },
+        {
+          "id": "inventory-service",
+          "type": "serviceNode",
+          "position": {
+            "x": 60,
+            "y": 280
+          },
+          "parentId": "group:commerce",
+          "extent": "parent",
+          "data": {
+            "label": "Inventory Service",
+            "name": "Inventory Service",
+            "repoName": "inventory-service",
+            "repoUrl": "https://github.com/docktail/inventory-service",
+            "language": "Java",
+            "summary": "Consumes order.created events from Kafka and reserves stock in PostgreSQL",
+            "endpoints": [],
+            "serviceType": "service",
+            "domain": "commerce",
+            "tags": [
+              "kafka-consumer",
+              "postgres"
+            ]
+          }
+        }
+      ],
+      "edges": []
     }
   }
 }
