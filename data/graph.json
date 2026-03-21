@@ -1,290 +1,16 @@
 {
-  "generatedAt": "2026-03-21T14:40:59.872Z",
+  "generatedAt": "2026-03-21T15:47:56.436Z",
   "meta": {
-    "org": "local",
-    "repoCount": 2,
-    "serviceCount": 2
+    "org": "docktail",
+    "repoCount": 3,
+    "serviceCount": 3
   },
   "services": [
-    {
-      "id": "inventory-service",
-      "name": "Inventory Service",
-      "repoName": "inventory-service",
-      "repoUrl": "file://C:/Users/abdul/projects/fun/docktail/services/inventory-service",
-      "language": "Java",
-      "summary": "Consumes order.created events from Kafka and reserves stock in PostgreSQL",
-      "endpoints": [],
-      "dataTypes": [
-        {
-          "name": "ReservationResult",
-          "fields": [
-            {
-              "type": "UUID",
-              "name": "reservationId"
-            },
-            {
-              "type": "UUID",
-              "name": "orderId"
-            },
-            {
-              "type": "String",
-              "name": "productSku"
-            },
-            {
-              "type": "Integer",
-              "name": "reservedQuantity"
-            },
-            {
-              "type": "ReservationStatus",
-              "name": "status"
-            },
-            {
-              "type": "String",
-              "name": "failureReason"
-            },
-            {
-              "type": "Instant",
-              "name": "reservedAt"
-            }
-          ],
-          "producedBy": [],
-          "consumedBy": [
-            "inventory-service"
-          ]
-        },
-        {
-          "name": "StockAdjustmentRequest",
-          "fields": [
-            {
-              "type": "String",
-              "name": "productSku"
-            },
-            {
-              "type": "Integer",
-              "name": "quantity"
-            }
-          ],
-          "producedBy": [],
-          "consumedBy": [
-            "inventory-service"
-          ]
-        },
-        {
-          "name": "InventoryReservation",
-          "fields": [
-            {
-              "type": "UUID",
-              "name": "id"
-            },
-            {
-              "type": "UUID",
-              "name": "orderId"
-            },
-            {
-              "type": "String",
-              "name": "productSku"
-            },
-            {
-              "type": "Integer",
-              "name": "reservedQuantity"
-            },
-            {
-              "type": "ReservationStatus",
-              "name": "status"
-            },
-            {
-              "type": "String",
-              "name": "failureReason"
-            },
-            {
-              "type": "Instant",
-              "name": "reservedAt"
-            },
-            {
-              "type": "Instant",
-              "name": "updatedAt"
-            }
-          ],
-          "producedBy": [
-            "inventory-service"
-          ],
-          "consumedBy": []
-        },
-        {
-          "name": "StockLevel",
-          "fields": [
-            {
-              "type": "String",
-              "name": "productSku"
-            },
-            {
-              "type": "Integer",
-              "name": "availableQuantity"
-            },
-            {
-              "type": "Integer",
-              "name": "reservedQuantity"
-            },
-            {
-              "type": "Instant",
-              "name": "updatedAt"
-            }
-          ],
-          "producedBy": [
-            "inventory-service"
-          ],
-          "consumedBy": []
-        },
-        {
-          "name": "OrderCreatedEvent",
-          "fields": [
-            {
-              "type": "UUID",
-              "name": "orderId"
-            },
-            {
-              "type": "String",
-              "name": "customerId"
-            },
-            {
-              "type": "String",
-              "name": "productSku"
-            },
-            {
-              "type": "Integer",
-              "name": "quantity"
-            },
-            {
-              "type": "BigDecimal",
-              "name": "unitPrice"
-            },
-            {
-              "type": "BigDecimal",
-              "name": "totalPrice"
-            },
-            {
-              "type": "Instant",
-              "name": "occurredAt"
-            }
-          ],
-          "producedBy": [
-            "inventory-service"
-          ],
-          "consumedBy": []
-        }
-      ],
-      "functions": [
-        {
-          "name": "orderEventConsumerFactory",
-          "className": "KafkaConsumerConfig",
-          "signature": "public ConsumerFactory<String, OrderCreatedEvent> orderEventConsumerFactory() {",
-          "callsOut": [],
-          "callsMethods": [],
-          "callsBeanMethods": []
-        },
-        {
-          "name": "handleOrderCreated",
-          "className": "OrderCreatedConsumer",
-          "signature": "public void handleOrderCreated(",
-          "callsOut": [
-            {
-              "targetService": "inventory",
-              "targetServiceId": "inventory"
-            }
-          ],
-          "callsMethods": [],
-          "callsBeanMethods": [
-            {
-              "beanVariable": "inventoryService",
-              "methodName": "reserve"
-            }
-          ]
-        },
-        {
-          "name": "main",
-          "className": "InventoryServiceApplication",
-          "signature": "public static void main(String[] args) {",
-          "callsOut": [],
-          "callsMethods": [],
-          "callsBeanMethods": []
-        },
-        {
-          "name": "reserve",
-          "className": "InventoryService",
-          "signature": "public ReservationResult reserve(OrderCreatedEvent event) {",
-          "callsOut": [
-            {
-              "targetService": "reservation",
-              "targetServiceId": "reservation"
-            }
-          ],
-          "callsMethods": [
-            "createReservation"
-          ],
-          "callsBeanMethods": [
-            {
-              "beanVariable": "reservationRepository",
-              "methodName": "findByOrderId"
-            }
-          ]
-        },
-        {
-          "name": "createReservation",
-          "className": "InventoryService",
-          "signature": "private ReservationResult createReservation(OrderCreatedEvent event) {",
-          "callsOut": [
-            {
-              "targetService": "stocklevel",
-              "targetServiceId": "stocklevel"
-            },
-            {
-              "targetService": "reservation",
-              "targetServiceId": "reservation"
-            }
-          ],
-          "callsMethods": [],
-          "callsBeanMethods": [
-            {
-              "beanVariable": "stockLevelRepository",
-              "methodName": "reserveStock"
-            },
-            {
-              "beanVariable": "reservationRepository",
-              "methodName": "save"
-            }
-          ]
-        }
-      ],
-      "dependsOn": [
-        "order-service"
-      ],
-      "kafkaProducers": [],
-      "kafkaConsumers": [
-        {
-          "topics": [
-            "${app.kafka.topics.order-created:order.created}",
-            "${spring.kafka.consumer.group-id}",
-            "kafkaListenerContainerFactory",
-            "${app.kafka.topics.order-created:order.created}",
-            "${spring.kafka.consumer.group-id}"
-          ],
-          "groupId": "${spring.kafka.consumer.group-id}",
-          "handlerMethod": "unknown",
-          "handlerClass": "OrderCreatedConsumer"
-        }
-      ],
-      "type": "service",
-      "domain": "commerce",
-      "tags": [
-        "kafka-consumer",
-        "postgres"
-      ]
-    },
     {
       "id": "order-service",
       "name": "Order Service",
       "repoName": "order-service",
-      "repoUrl": "file://C:/Users/abdul/projects/fun/docktail/services/order-service",
+      "repoUrl": "https://github.com/docktail/order-service",
       "language": "Java",
       "summary": "Accepts order creation requests via REST, persists to PostgreSQL, and publishes order.created events to Kafka",
       "endpoints": [
@@ -541,6 +267,14 @@
       ],
       "functions": [
         {
+          "name": "main",
+          "className": "OrderServiceApplication",
+          "signature": "public static void main(String[] args) {",
+          "callsOut": [],
+          "callsMethods": [],
+          "callsBeanMethods": []
+        },
+        {
           "name": "validationEventConsumerFactory",
           "className": "KafkaConsumerConfig",
           "signature": "public ConsumerFactory<String, OrderValidationRequestedEvent> validationEventConsumerFactory() {",
@@ -677,14 +411,6 @@
               "methodName": "updateStatus"
             }
           ]
-        },
-        {
-          "name": "main",
-          "className": "OrderServiceApplication",
-          "signature": "public static void main(String[] args) {",
-          "callsOut": [],
-          "callsMethods": [],
-          "callsBeanMethods": []
         },
         {
           "name": "validate",
@@ -955,34 +681,297 @@
         "postgres",
         "critical"
       ]
+    },
+    {
+      "id": "inventory-service",
+      "name": "Inventory Service",
+      "repoName": "inventory-service",
+      "repoUrl": "https://github.com/docktail/inventory-service",
+      "language": "Java",
+      "summary": "Consumes order.created events from Kafka and reserves stock in PostgreSQL",
+      "endpoints": [],
+      "dataTypes": [
+        {
+          "name": "ReservationResult",
+          "fields": [
+            {
+              "type": "UUID",
+              "name": "reservationId"
+            },
+            {
+              "type": "UUID",
+              "name": "orderId"
+            },
+            {
+              "type": "String",
+              "name": "productSku"
+            },
+            {
+              "type": "Integer",
+              "name": "reservedQuantity"
+            },
+            {
+              "type": "ReservationStatus",
+              "name": "status"
+            },
+            {
+              "type": "String",
+              "name": "failureReason"
+            },
+            {
+              "type": "Instant",
+              "name": "reservedAt"
+            }
+          ],
+          "producedBy": [],
+          "consumedBy": [
+            "inventory-service"
+          ]
+        },
+        {
+          "name": "StockAdjustmentRequest",
+          "fields": [
+            {
+              "type": "String",
+              "name": "productSku"
+            },
+            {
+              "type": "Integer",
+              "name": "quantity"
+            }
+          ],
+          "producedBy": [],
+          "consumedBy": [
+            "inventory-service"
+          ]
+        },
+        {
+          "name": "InventoryReservation",
+          "fields": [
+            {
+              "type": "UUID",
+              "name": "id"
+            },
+            {
+              "type": "UUID",
+              "name": "orderId"
+            },
+            {
+              "type": "String",
+              "name": "productSku"
+            },
+            {
+              "type": "Integer",
+              "name": "reservedQuantity"
+            },
+            {
+              "type": "ReservationStatus",
+              "name": "status"
+            },
+            {
+              "type": "String",
+              "name": "failureReason"
+            },
+            {
+              "type": "Instant",
+              "name": "reservedAt"
+            },
+            {
+              "type": "Instant",
+              "name": "updatedAt"
+            }
+          ],
+          "producedBy": [
+            "inventory-service"
+          ],
+          "consumedBy": []
+        },
+        {
+          "name": "StockLevel",
+          "fields": [
+            {
+              "type": "String",
+              "name": "productSku"
+            },
+            {
+              "type": "Integer",
+              "name": "availableQuantity"
+            },
+            {
+              "type": "Integer",
+              "name": "reservedQuantity"
+            },
+            {
+              "type": "Instant",
+              "name": "updatedAt"
+            }
+          ],
+          "producedBy": [
+            "inventory-service"
+          ],
+          "consumedBy": []
+        },
+        {
+          "name": "OrderCreatedEvent",
+          "fields": [
+            {
+              "type": "UUID",
+              "name": "orderId"
+            },
+            {
+              "type": "String",
+              "name": "customerId"
+            },
+            {
+              "type": "String",
+              "name": "productSku"
+            },
+            {
+              "type": "Integer",
+              "name": "quantity"
+            },
+            {
+              "type": "BigDecimal",
+              "name": "unitPrice"
+            },
+            {
+              "type": "BigDecimal",
+              "name": "totalPrice"
+            },
+            {
+              "type": "Instant",
+              "name": "occurredAt"
+            }
+          ],
+          "producedBy": [
+            "inventory-service"
+          ],
+          "consumedBy": []
+        }
+      ],
+      "functions": [
+        {
+          "name": "main",
+          "className": "InventoryServiceApplication",
+          "signature": "public static void main(String[] args) {",
+          "callsOut": [],
+          "callsMethods": [],
+          "callsBeanMethods": []
+        },
+        {
+          "name": "orderEventConsumerFactory",
+          "className": "KafkaConsumerConfig",
+          "signature": "public ConsumerFactory<String, OrderCreatedEvent> orderEventConsumerFactory() {",
+          "callsOut": [],
+          "callsMethods": [],
+          "callsBeanMethods": []
+        },
+        {
+          "name": "handleOrderCreated",
+          "className": "OrderCreatedConsumer",
+          "signature": "public void handleOrderCreated(",
+          "callsOut": [
+            {
+              "targetService": "inventory",
+              "targetServiceId": "inventory"
+            }
+          ],
+          "callsMethods": [],
+          "callsBeanMethods": [
+            {
+              "beanVariable": "inventoryService",
+              "methodName": "reserve"
+            }
+          ]
+        },
+        {
+          "name": "reserve",
+          "className": "InventoryService",
+          "signature": "public ReservationResult reserve(OrderCreatedEvent event) {",
+          "callsOut": [
+            {
+              "targetService": "reservation",
+              "targetServiceId": "reservation"
+            }
+          ],
+          "callsMethods": [
+            "createReservation"
+          ],
+          "callsBeanMethods": [
+            {
+              "beanVariable": "reservationRepository",
+              "methodName": "findByOrderId"
+            }
+          ]
+        },
+        {
+          "name": "createReservation",
+          "className": "InventoryService",
+          "signature": "private ReservationResult createReservation(OrderCreatedEvent event) {",
+          "callsOut": [
+            {
+              "targetService": "stocklevel",
+              "targetServiceId": "stocklevel"
+            },
+            {
+              "targetService": "reservation",
+              "targetServiceId": "reservation"
+            }
+          ],
+          "callsMethods": [],
+          "callsBeanMethods": [
+            {
+              "beanVariable": "stockLevelRepository",
+              "methodName": "reserveStock"
+            },
+            {
+              "beanVariable": "reservationRepository",
+              "methodName": "save"
+            }
+          ]
+        }
+      ],
+      "dependsOn": [
+        "order-service"
+      ],
+      "kafkaProducers": [],
+      "kafkaConsumers": [
+        {
+          "topics": [
+            "${app.kafka.topics.order-created:order.created}",
+            "${spring.kafka.consumer.group-id}",
+            "kafkaListenerContainerFactory",
+            "${app.kafka.topics.order-created:order.created}",
+            "${spring.kafka.consumer.group-id}"
+          ],
+          "groupId": "${spring.kafka.consumer.group-id}",
+          "handlerMethod": "unknown",
+          "handlerClass": "OrderCreatedConsumer"
+        }
+      ],
+      "type": "service",
+      "domain": "commerce",
+      "tags": [
+        "kafka-consumer",
+        "postgres"
+      ]
+    },
+    {
+      "id": "archmap",
+      "name": "archmap",
+      "repoName": "archmap",
+      "repoUrl": "https://github.com/docktail/archmap",
+      "language": "unknown",
+      "summary": "",
+      "endpoints": [],
+      "dataTypes": [],
+      "functions": [],
+      "dependsOn": []
     }
   ],
   "views": {
     "serviceFlow": {
       "nodes": [
-        {
-          "id": "inventory-service",
-          "type": "serviceNode",
-          "data": {
-            "label": "Inventory Service",
-            "name": "Inventory Service",
-            "repoName": "inventory-service",
-            "repoUrl": "file://C:/Users/abdul/projects/fun/docktail/services/inventory-service",
-            "language": "Java",
-            "summary": "Consumes order.created events from Kafka and reserves stock in PostgreSQL",
-            "endpoints": [],
-            "serviceType": "service",
-            "domain": "commerce",
-            "tags": [
-              "kafka-consumer",
-              "postgres"
-            ]
-          },
-          "position": {
-            "x": 0,
-            "y": 0
-          }
-        },
         {
           "id": "order-service",
           "type": "serviceNode",
@@ -990,7 +979,7 @@
             "label": "Order Service",
             "name": "Order Service",
             "repoName": "order-service",
-            "repoUrl": "file://C:/Users/abdul/projects/fun/docktail/services/order-service",
+            "repoUrl": "https://github.com/docktail/order-service",
             "language": "Java",
             "summary": "Accepts order creation requests via REST, persists to PostgreSQL, and publishes order.created events to Kafka",
             "endpoints": [
@@ -1027,7 +1016,47 @@
           },
           "position": {
             "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "id": "inventory-service",
+          "type": "serviceNode",
+          "data": {
+            "label": "Inventory Service",
+            "name": "Inventory Service",
+            "repoName": "inventory-service",
+            "repoUrl": "https://github.com/docktail/inventory-service",
+            "language": "Java",
+            "summary": "Consumes order.created events from Kafka and reserves stock in PostgreSQL",
+            "endpoints": [],
+            "serviceType": "service",
+            "domain": "commerce",
+            "tags": [
+              "kafka-consumer",
+              "postgres"
+            ]
+          },
+          "position": {
+            "x": 0,
             "y": 160
+          }
+        },
+        {
+          "id": "archmap",
+          "type": "serviceNode",
+          "data": {
+            "label": "archmap",
+            "name": "archmap",
+            "repoName": "archmap",
+            "repoUrl": "https://github.com/docktail/archmap",
+            "language": "unknown",
+            "summary": "",
+            "endpoints": []
+          },
+          "position": {
+            "x": 340,
+            "y": 0
           }
         }
       ],
@@ -1043,209 +1072,6 @@
     },
     "dataFlow": {
       "nodes": [
-        {
-          "id": "dt:ReservationResult",
-          "type": "dataTypeNode",
-          "data": {
-            "label": "ReservationResult",
-            "name": "ReservationResult",
-            "fields": [
-              {
-                "type": "UUID",
-                "name": "reservationId"
-              },
-              {
-                "type": "UUID",
-                "name": "orderId"
-              },
-              {
-                "type": "String",
-                "name": "productSku"
-              },
-              {
-                "type": "Integer",
-                "name": "reservedQuantity"
-              },
-              {
-                "type": "ReservationStatus",
-                "name": "status"
-              },
-              {
-                "type": "String",
-                "name": "failureReason"
-              },
-              {
-                "type": "Instant",
-                "name": "reservedAt"
-              }
-            ],
-            "producedBy": [],
-            "consumedBy": [
-              "inventory-service"
-            ]
-          },
-          "position": {
-            "x": 0,
-            "y": 0
-          }
-        },
-        {
-          "id": "dt:StockAdjustmentRequest",
-          "type": "dataTypeNode",
-          "data": {
-            "label": "StockAdjustmentRequest",
-            "name": "StockAdjustmentRequest",
-            "fields": [
-              {
-                "type": "String",
-                "name": "productSku"
-              },
-              {
-                "type": "Integer",
-                "name": "quantity"
-              }
-            ],
-            "producedBy": [],
-            "consumedBy": [
-              "inventory-service"
-            ]
-          },
-          "position": {
-            "x": 280,
-            "y": 0
-          }
-        },
-        {
-          "id": "dt:InventoryReservation",
-          "type": "dataTypeNode",
-          "data": {
-            "label": "InventoryReservation",
-            "name": "InventoryReservation",
-            "fields": [
-              {
-                "type": "UUID",
-                "name": "id"
-              },
-              {
-                "type": "UUID",
-                "name": "orderId"
-              },
-              {
-                "type": "String",
-                "name": "productSku"
-              },
-              {
-                "type": "Integer",
-                "name": "reservedQuantity"
-              },
-              {
-                "type": "ReservationStatus",
-                "name": "status"
-              },
-              {
-                "type": "String",
-                "name": "failureReason"
-              },
-              {
-                "type": "Instant",
-                "name": "reservedAt"
-              },
-              {
-                "type": "Instant",
-                "name": "updatedAt"
-              }
-            ],
-            "producedBy": [
-              "inventory-service"
-            ],
-            "consumedBy": []
-          },
-          "position": {
-            "x": 560,
-            "y": 0
-          }
-        },
-        {
-          "id": "dt:StockLevel",
-          "type": "dataTypeNode",
-          "data": {
-            "label": "StockLevel",
-            "name": "StockLevel",
-            "fields": [
-              {
-                "type": "String",
-                "name": "productSku"
-              },
-              {
-                "type": "Integer",
-                "name": "availableQuantity"
-              },
-              {
-                "type": "Integer",
-                "name": "reservedQuantity"
-              },
-              {
-                "type": "Instant",
-                "name": "updatedAt"
-              }
-            ],
-            "producedBy": [
-              "inventory-service"
-            ],
-            "consumedBy": []
-          },
-          "position": {
-            "x": 840,
-            "y": 0
-          }
-        },
-        {
-          "id": "dt:OrderCreatedEvent",
-          "type": "dataTypeNode",
-          "data": {
-            "label": "OrderCreatedEvent",
-            "name": "OrderCreatedEvent",
-            "fields": [
-              {
-                "type": "UUID",
-                "name": "orderId"
-              },
-              {
-                "type": "String",
-                "name": "customerId"
-              },
-              {
-                "type": "String",
-                "name": "productSku"
-              },
-              {
-                "type": "Integer",
-                "name": "quantity"
-              },
-              {
-                "type": "BigDecimal",
-                "name": "unitPrice"
-              },
-              {
-                "type": "BigDecimal",
-                "name": "totalPrice"
-              },
-              {
-                "type": "Instant",
-                "name": "occurredAt"
-              }
-            ],
-            "producedBy": [
-              "inventory-service",
-              "order-service"
-            ],
-            "consumedBy": []
-          },
-          "position": {
-            "x": 0,
-            "y": 220
-          }
-        },
         {
           "id": "dt:CreateOrderRequest",
           "type": "dataTypeNode",
@@ -1276,8 +1102,8 @@
             ]
           },
           "position": {
-            "x": 280,
-            "y": 220
+            "x": 0,
+            "y": 0
           }
         },
         {
@@ -1330,8 +1156,8 @@
             ]
           },
           "position": {
-            "x": 560,
-            "y": 220
+            "x": 280,
+            "y": 0
           }
         },
         {
@@ -1352,8 +1178,8 @@
             ]
           },
           "position": {
-            "x": 840,
-            "y": 220
+            "x": 560,
+            "y": 0
           }
         },
         {
@@ -1402,8 +1228,55 @@
             "consumedBy": []
           },
           "position": {
+            "x": 840,
+            "y": 0
+          }
+        },
+        {
+          "id": "dt:OrderCreatedEvent",
+          "type": "dataTypeNode",
+          "data": {
+            "label": "OrderCreatedEvent",
+            "name": "OrderCreatedEvent",
+            "fields": [
+              {
+                "type": "UUID",
+                "name": "orderId"
+              },
+              {
+                "type": "String",
+                "name": "customerId"
+              },
+              {
+                "type": "String",
+                "name": "productSku"
+              },
+              {
+                "type": "Integer",
+                "name": "quantity"
+              },
+              {
+                "type": "BigDecimal",
+                "name": "unitPrice"
+              },
+              {
+                "type": "BigDecimal",
+                "name": "totalPrice"
+              },
+              {
+                "type": "Instant",
+                "name": "occurredAt"
+              }
+            ],
+            "producedBy": [
+              "order-service",
+              "inventory-service"
+            ],
+            "consumedBy": []
+          },
+          "position": {
             "x": 0,
-            "y": 440
+            "y": 220
           }
         },
         {
@@ -1445,7 +1318,7 @@
           },
           "position": {
             "x": 280,
-            "y": 440
+            "y": 220
           }
         },
         {
@@ -1487,6 +1360,162 @@
           },
           "position": {
             "x": 560,
+            "y": 220
+          }
+        },
+        {
+          "id": "dt:ReservationResult",
+          "type": "dataTypeNode",
+          "data": {
+            "label": "ReservationResult",
+            "name": "ReservationResult",
+            "fields": [
+              {
+                "type": "UUID",
+                "name": "reservationId"
+              },
+              {
+                "type": "UUID",
+                "name": "orderId"
+              },
+              {
+                "type": "String",
+                "name": "productSku"
+              },
+              {
+                "type": "Integer",
+                "name": "reservedQuantity"
+              },
+              {
+                "type": "ReservationStatus",
+                "name": "status"
+              },
+              {
+                "type": "String",
+                "name": "failureReason"
+              },
+              {
+                "type": "Instant",
+                "name": "reservedAt"
+              }
+            ],
+            "producedBy": [],
+            "consumedBy": [
+              "inventory-service"
+            ]
+          },
+          "position": {
+            "x": 840,
+            "y": 220
+          }
+        },
+        {
+          "id": "dt:StockAdjustmentRequest",
+          "type": "dataTypeNode",
+          "data": {
+            "label": "StockAdjustmentRequest",
+            "name": "StockAdjustmentRequest",
+            "fields": [
+              {
+                "type": "String",
+                "name": "productSku"
+              },
+              {
+                "type": "Integer",
+                "name": "quantity"
+              }
+            ],
+            "producedBy": [],
+            "consumedBy": [
+              "inventory-service"
+            ]
+          },
+          "position": {
+            "x": 0,
+            "y": 440
+          }
+        },
+        {
+          "id": "dt:InventoryReservation",
+          "type": "dataTypeNode",
+          "data": {
+            "label": "InventoryReservation",
+            "name": "InventoryReservation",
+            "fields": [
+              {
+                "type": "UUID",
+                "name": "id"
+              },
+              {
+                "type": "UUID",
+                "name": "orderId"
+              },
+              {
+                "type": "String",
+                "name": "productSku"
+              },
+              {
+                "type": "Integer",
+                "name": "reservedQuantity"
+              },
+              {
+                "type": "ReservationStatus",
+                "name": "status"
+              },
+              {
+                "type": "String",
+                "name": "failureReason"
+              },
+              {
+                "type": "Instant",
+                "name": "reservedAt"
+              },
+              {
+                "type": "Instant",
+                "name": "updatedAt"
+              }
+            ],
+            "producedBy": [
+              "inventory-service"
+            ],
+            "consumedBy": []
+          },
+          "position": {
+            "x": 280,
+            "y": 440
+          }
+        },
+        {
+          "id": "dt:StockLevel",
+          "type": "dataTypeNode",
+          "data": {
+            "label": "StockLevel",
+            "name": "StockLevel",
+            "fields": [
+              {
+                "type": "String",
+                "name": "productSku"
+              },
+              {
+                "type": "Integer",
+                "name": "availableQuantity"
+              },
+              {
+                "type": "Integer",
+                "name": "reservedQuantity"
+              },
+              {
+                "type": "Instant",
+                "name": "updatedAt"
+              }
+            ],
+            "producedBy": [
+              "inventory-service"
+            ],
+            "consumedBy": []
+          },
+          "position": {
+            "x": 560,
             "y": 440
           }
         }
@@ -1496,107 +1525,20 @@
     "functionFlow": {
       "nodes": [
         {
-          "id": "fn:inventory-service:KafkaConsumerConfig.orderEventConsumerFactory",
+          "id": "fn:order-service:OrderServiceApplication.main",
           "type": "functionNode",
           "data": {
-            "label": "orderEventConsumerFactory",
-            "name": "orderEventConsumerFactory",
-            "className": "KafkaConsumerConfig",
-            "serviceName": "Inventory Service",
-            "serviceId": "inventory-service",
-            "signature": "public ConsumerFactory<String, OrderCreatedEvent> orderEventConsumerFactory() {",
+            "label": "main",
+            "name": "main",
+            "className": "OrderServiceApplication",
+            "serviceName": "Order Service",
+            "serviceId": "order-service",
+            "signature": "public static void main(String[] args) {",
             "callsOut": []
           },
           "position": {
             "x": 0,
             "y": 0
-          }
-        },
-        {
-          "id": "fn:inventory-service:OrderCreatedConsumer.handleOrderCreated",
-          "type": "functionNode",
-          "data": {
-            "label": "handleOrderCreated",
-            "name": "handleOrderCreated",
-            "className": "OrderCreatedConsumer",
-            "serviceName": "Inventory Service",
-            "serviceId": "inventory-service",
-            "signature": "public void handleOrderCreated(",
-            "callsOut": [
-              {
-                "targetService": "inventory",
-                "targetServiceId": "inventory"
-              }
-            ]
-          },
-          "position": {
-            "x": 340,
-            "y": 0
-          }
-        },
-        {
-          "id": "fn:inventory-service:InventoryServiceApplication.main",
-          "type": "functionNode",
-          "data": {
-            "label": "main",
-            "name": "main",
-            "className": "InventoryServiceApplication",
-            "serviceName": "Inventory Service",
-            "serviceId": "inventory-service",
-            "signature": "public static void main(String[] args) {",
-            "callsOut": []
-          },
-          "position": {
-            "x": 680,
-            "y": 0
-          }
-        },
-        {
-          "id": "fn:inventory-service:InventoryService.reserve",
-          "type": "functionNode",
-          "data": {
-            "label": "reserve",
-            "name": "reserve",
-            "className": "InventoryService",
-            "serviceName": "Inventory Service",
-            "serviceId": "inventory-service",
-            "signature": "public ReservationResult reserve(OrderCreatedEvent event) {",
-            "callsOut": [
-              {
-                "targetService": "reservation",
-                "targetServiceId": "reservation"
-              }
-            ]
-          },
-          "position": {
-            "x": 1020,
-            "y": 0
-          }
-        },
-        {
-          "id": "fn:inventory-service:InventoryService.createReservation",
-          "type": "functionNode",
-          "data": {
-            "label": "createReservation",
-            "name": "createReservation",
-            "className": "InventoryService",
-            "serviceName": "Inventory Service",
-            "serviceId": "inventory-service",
-            "signature": "private ReservationResult createReservation(OrderCreatedEvent event) {",
-            "callsOut": [
-              {
-                "targetService": "stocklevel",
-                "targetServiceId": "stocklevel"
-              },
-              {
-                "targetService": "reservation",
-                "targetServiceId": "reservation"
-              }
-            ]
-          },
-          "position": {
-            "x": 1020,
-            "y": 160
           }
         },
         {
@@ -1612,7 +1554,7 @@
             "callsOut": []
           },
           "position": {
-            "x": 1360,
+            "x": 340,
             "y": 0
           }
         },
@@ -1629,7 +1571,7 @@
             "callsOut": []
           },
           "position": {
-            "x": 1700,
+            "x": 680,
             "y": 0
           }
         },
@@ -1646,7 +1588,7 @@
             "callsOut": []
           },
           "position": {
-            "x": 1700,
+            "x": 680,
             "y": 160
           }
         },
@@ -1663,7 +1605,7 @@
             "callsOut": []
           },
           "position": {
-            "x": 1700,
+            "x": 680,
             "y": 320
           }
         },
@@ -1680,7 +1622,7 @@
             "callsOut": []
           },
           "position": {
-            "x": 1700,
+            "x": 680,
             "y": 480
           }
         },
@@ -1697,7 +1639,7 @@
             "callsOut": []
           },
           "position": {
-            "x": 1700,
+            "x": 680,
             "y": 640
           }
         },
@@ -1723,7 +1665,7 @@
             ]
           },
           "position": {
-            "x": 2040,
+            "x": 1020,
             "y": 0
           }
         },
@@ -1740,7 +1682,7 @@
             "callsOut": []
           },
           "position": {
-            "x": 2380,
+            "x": 1360,
             "y": 0
           }
         },
@@ -1757,7 +1699,7 @@
             "callsOut": []
           },
           "position": {
-            "x": 2380,
+            "x": 1360,
             "y": 160
           }
         },
@@ -1779,7 +1721,7 @@
             ]
           },
           "position": {
-            "x": 2720,
+            "x": 1700,
             "y": 0
           }
         },
@@ -1801,25 +1743,8 @@
             ]
           },
           "position": {
-            "x": 2720,
+            "x": 1700,
             "y": 160
-          }
-        },
-        {
-          "id": "fn:order-service:OrderServiceApplication.main",
-          "type": "functionNode",
-          "data": {
-            "label": "main",
-            "name": "main",
-            "className": "OrderServiceApplication",
-            "serviceName": "Order Service",
-            "serviceId": "order-service",
-            "signature": "public static void main(String[] args) {",
-            "callsOut": []
-          },
-          "position": {
-            "x": 3060,
-            "y": 0
           }
         },
         {
@@ -1835,7 +1760,7 @@
             "callsOut": []
           },
           "position": {
-            "x": 3400,
+            "x": 2040,
             "y": 0
           }
         },
@@ -1852,7 +1777,7 @@
             "callsOut": []
           },
           "position": {
-            "x": 3400,
+            "x": 2040,
             "y": 160
           }
         },
@@ -1874,7 +1799,7 @@
             ]
           },
           "position": {
-            "x": 3400,
+            "x": 2040,
             "y": 320
           }
         },
@@ -1891,7 +1816,7 @@
             "callsOut": []
           },
           "position": {
-            "x": 3400,
+            "x": 2040,
             "y": 480
           }
         },
@@ -1908,7 +1833,7 @@
             "callsOut": []
           },
           "position": {
-            "x": 3740,
+            "x": 2380,
             "y": 0
           }
         },
@@ -1930,7 +1855,7 @@
             ]
           },
           "position": {
-            "x": 3740,
+            "x": 2380,
             "y": 160
           }
         },
@@ -1947,7 +1872,7 @@
             "callsOut": []
           },
           "position": {
-            "x": 3740,
+            "x": 2380,
             "y": 320
           }
         },
@@ -1964,7 +1889,7 @@
             "callsOut": []
           },
           "position": {
-            "x": 3740,
+            "x": 2380,
             "y": 480
           }
         },
@@ -1986,7 +1911,7 @@
             ]
           },
           "position": {
-            "x": 4080,
+            "x": 2720,
             "y": 0
           }
         },
@@ -2008,7 +1933,7 @@
             ]
           },
           "position": {
-            "x": 4080,
+            "x": 2720,
             "y": 160
           }
         },
@@ -2030,7 +1955,7 @@
             ]
           },
           "position": {
-            "x": 4080,
+            "x": 2720,
             "y": 320
           }
         },
@@ -2052,7 +1977,7 @@
             ]
           },
           "position": {
-            "x": 4080,
+            "x": 2720,
             "y": 480
           }
         },
@@ -2082,7 +2007,7 @@
             ]
           },
           "position": {
-            "x": 4420,
+            "x": 3060,
             "y": 0
           }
         },
@@ -2099,7 +2024,7 @@
             "callsOut": []
           },
           "position": {
-            "x": 4420,
+            "x": 3060,
             "y": 160
           }
         },
@@ -2116,7 +2041,7 @@
             "callsOut": []
           },
           "position": {
-            "x": 4760,
+            "x": 3400,
             "y": 0
           }
         },
@@ -2133,7 +2058,7 @@
             "callsOut": []
           },
           "position": {
-            "x": 4760,
+            "x": 3400,
             "y": 160
           }
         },
@@ -2150,26 +2075,116 @@
             "callsOut": []
           },
           "position": {
-            "x": 4760,
+            "x": 3400,
             "y": 320
+          }
+        },
+        {
+          "id": "fn:inventory-service:InventoryServiceApplication.main",
+          "type": "functionNode",
+          "data": {
+            "label": "main",
+            "name": "main",
+            "className": "InventoryServiceApplication",
+            "serviceName": "Inventory Service",
+            "serviceId": "inventory-service",
+            "signature": "public static void main(String[] args) {",
+            "callsOut": []
+          },
+          "position": {
+            "x": 3740,
+            "y": 0
+          }
+        },
+        {
+          "id": "fn:inventory-service:KafkaConsumerConfig.orderEventConsumerFactory",
+          "type": "functionNode",
+          "data": {
+            "label": "orderEventConsumerFactory",
+            "name": "orderEventConsumerFactory",
+            "className": "KafkaConsumerConfig",
+            "serviceName": "Inventory Service",
+            "serviceId": "inventory-service",
+            "signature": "public ConsumerFactory<String, OrderCreatedEvent> orderEventConsumerFactory() {",
+            "callsOut": []
+          },
+          "position": {
+            "x": 4080,
+            "y": 0
+          }
+        },
+        {
+          "id": "fn:inventory-service:OrderCreatedConsumer.handleOrderCreated",
+          "type": "functionNode",
+          "data": {
+            "label": "handleOrderCreated",
+            "name": "handleOrderCreated",
+            "className": "OrderCreatedConsumer",
+            "serviceName": "Inventory Service",
+            "serviceId": "inventory-service",
+            "signature": "public void handleOrderCreated(",
+            "callsOut": [
+              {
+                "targetService": "inventory",
+                "targetServiceId": "inventory"
+              }
+            ]
+          },
+          "position": {
+            "x": 4420,
+            "y": 0
+          }
+        },
+        {
+          "id": "fn:inventory-service:InventoryService.reserve",
+          "type": "functionNode",
+          "data": {
+            "label": "reserve",
+            "name": "reserve",
+            "className": "InventoryService",
+            "serviceName": "Inventory Service",
+            "serviceId": "inventory-service",
+            "signature": "public ReservationResult reserve(OrderCreatedEvent event) {",
+            "callsOut": [
+              {
+                "targetService": "reservation",
+                "targetServiceId": "reservation"
+              }
+            ]
+          },
+          "position": {
+            "x": 4760,
+            "y": 0
+          }
+        },
+        {
+          "id": "fn:inventory-service:InventoryService.createReservation",
+          "type": "functionNode",
+          "data": {
+            "label": "createReservation",
+            "name": "createReservation",
+            "className": "InventoryService",
+            "serviceName": "Inventory Service",
+            "serviceId": "inventory-service",
+            "signature": "private ReservationResult createReservation(OrderCreatedEvent event) {",
+            "callsOut": [
+              {
+                "targetService": "stocklevel",
+                "targetServiceId": "stocklevel"
+              },
+              {
+                "targetService": "reservation",
+                "targetServiceId": "reservation"
+              }
+            ]
+          },
+          "position": {
+            "x": 4760,
+            "y": 160
           }
         }
       ],
       "edges": [
-        {
-          "id": "fn:inventory-service:OrderCreatedConsumer.handleOrderCreated→fn:inventory-service:InventoryService.reserve",
-          "source": "fn:inventory-service:OrderCreatedConsumer.handleOrderCreated",
-          "target": "fn:inventory-service:InventoryService.reserve",
-          "label": "inventoryService",
-          "animated": false
-        },
-        {
-          "id": "fn:inventory-service:InventoryService.reserve→fn:inventory-service:InventoryService.createReservation",
-          "source": "fn:inventory-service:InventoryService.reserve",
-          "target": "fn:inventory-service:InventoryService.createReservation",
-          "label": "calls",
-          "animated": false
-        },
         {
           "id": "fn:order-service:KafkaProducerConfig.validationEventProducerFactory→fn:order-service:KafkaProducerConfig.baseProducerProps",
           "source": "fn:order-service:KafkaProducerConfig.validationEventProducerFactory",
@@ -2287,6 +2302,20 @@
           "source": "fn:order-service:OrderValidationService.validate",
           "target": "fn:order-service:CustomerProfileService.validate",
           "label": "customerProfileService",
+          "animated": false
+        },
+        {
+          "id": "fn:inventory-service:OrderCreatedConsumer.handleOrderCreated→fn:inventory-service:InventoryService.reserve",
+          "source": "fn:inventory-service:OrderCreatedConsumer.handleOrderCreated",
+          "target": "fn:inventory-service:InventoryService.reserve",
+          "label": "inventoryService",
+          "animated": false
+        },
+        {
+          "id": "fn:inventory-service:InventoryService.reserve→fn:inventory-service:InventoryService.createReservation",
+          "source": "fn:inventory-service:InventoryService.reserve",
+          "target": "fn:inventory-service:InventoryService.createReservation",
+          "label": "calls",
           "animated": false
         }
       ]
