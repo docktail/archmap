@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-22T04:56:42.664Z",
+  "generatedAt": "2026-03-23T05:07:54.782Z",
   "meta": {
     "org": "docktail",
     "repoCount": 2,
@@ -55,6 +55,35 @@
             {
               "type": "BigDecimal",
               "name": "unitPrice"
+            }
+          ],
+          "producedBy": [],
+          "consumedBy": [
+            "order-service"
+          ]
+        },
+        {
+          "name": "DailySummaryReport",
+          "fields": [
+            {
+              "type": "Instant",
+              "name": "periodStart"
+            },
+            {
+              "type": "Instant",
+              "name": "periodEnd"
+            },
+            {
+              "type": "int",
+              "name": "confirmedOrders"
+            },
+            {
+              "type": "int",
+              "name": "cancelledOrders"
+            },
+            {
+              "type": "BigDecimal",
+              "name": "totalRevenue"
             }
           ],
           "producedBy": [],
@@ -413,6 +442,76 @@
           ]
         },
         {
+          "name": "cancelExpiredPendingOrders",
+          "className": "OrderMaintenanceScheduler",
+          "signature": "public void cancelExpiredPendingOrders() {",
+          "callsOut": [
+            {
+              "targetService": "order",
+              "targetServiceId": "order"
+            },
+            {
+              "targetService": "notification",
+              "targetServiceId": "notification"
+            }
+          ],
+          "callsMethods": [],
+          "callsBeanMethods": [
+            {
+              "beanVariable": "orderService",
+              "methodName": "findExpiredPendingOrders"
+            },
+            {
+              "beanVariable": "orderService",
+              "methodName": "rejectOrder"
+            },
+            {
+              "beanVariable": "notificationService",
+              "methodName": "sendOrderCancellationNotice"
+            }
+          ]
+        },
+        {
+          "name": "generateDailySalesReport",
+          "className": "OrderMaintenanceScheduler",
+          "signature": "public void generateDailySalesReport() {",
+          "callsOut": [
+            {
+              "targetService": "reporting",
+              "targetServiceId": "reporting"
+            }
+          ],
+          "callsMethods": [],
+          "callsBeanMethods": [
+            {
+              "beanVariable": "reportingService",
+              "methodName": "buildDailySummary"
+            },
+            {
+              "beanVariable": "reportingService",
+              "methodName": "publishSummary"
+            }
+          ]
+        },
+        {
+          "name": "archiveOldOrders",
+          "className": "OrderMaintenanceScheduler",
+          "signature": "public void archiveOldOrders() {",
+          "callsOut": [
+            {
+              "targetService": "order",
+              "targetServiceId": "order"
+            }
+          ],
+          "callsMethods": [],
+          "callsBeanMethods": [
+            {
+              "beanVariable": "orderService",
+              "methodName": "archiveOrdersBefore"
+            }
+          ]
+        },
+        {
           "name": "validate",
           "className": "CustomerProfileService",
           "signature": "public void validate(OrderValidationRequestedEvent event) {",
@@ -422,6 +521,24 @@
             "checkDailyOrderLimit",
             "checkOrderValueLimit"
           ],
+          "callsBeanMethods": []
+        },
+        {
+          "name": "fetchProfile",
+          "className": "CustomerProfileService",
+          "signature": "public CustomerProfile fetchProfile(String customerId) {",
+          "callsOut": [],
+          "callsMethods": [
+            "CustomerProfile"
+          ],
+          "callsBeanMethods": []
+        },
+        {
+          "name": "CustomerProfile",
+          "className": "CustomerProfileService",
+          "signature": "public record CustomerProfile(String customerId, String email) {",
+          "callsOut": [],
+          "callsMethods": [],
           "callsBeanMethods": []
         },
         {
@@ -503,6 +620,60 @@
           "callsOut": [],
           "callsMethods": [],
           "callsBeanMethods": []
+        },
+        {
+          "name": "sendOrderConfirmationEmail",
+          "className": "NotificationService",
+          "signature": "public void sendOrderConfirmationEmail(UUID orderId, String customerId) {",
+          "callsOut": [
+            {
+              "targetService": "customerprofile",
+              "targetServiceId": "customerprofile"
+            }
+          ],
+          "callsMethods": [],
+          "callsBeanMethods": [
+            {
+              "beanVariable": "customerProfileService",
+              "methodName": "fetchProfile"
+            }
+          ]
+        },
+        {
+          "name": "sendOrderCancellationNotice",
+          "className": "NotificationService",
+          "signature": "public void sendOrderCancellationNotice(UUID orderId, String customerId) {",
+          "callsOut": [
+            {
+              "targetService": "customerprofile",
+              "targetServiceId": "customerprofile"
+            }
+          ],
+          "callsMethods": [],
+          "callsBeanMethods": [
+            {
+              "beanVariable": "customerProfileService",
+              "methodName": "fetchProfile"
+            }
+          ]
+        },
+        {
+          "name": "sendFraudAlert",
+          "className": "NotificationService",
+          "signature": "public void sendFraudAlert(UUID orderId, String customerId) {",
+          "callsOut": [
+            {
+              "targetService": "customerprofile",
+              "targetServiceId": "customerprofile"
+            }
+          ],
+          "callsMethods": [],
+          "callsBeanMethods": [
+            {
+              "beanVariable": "customerProfileService",
+              "methodName": "fetchProfile"
+            }
+          ]
         },
         {
           "name": "initiateOrder",
@@ -589,6 +760,42 @@
           ]
         },
         {
+          "name": "findExpiredPendingOrders",
+          "className": "OrderService",
+          "signature": "public List<Order> findExpiredPendingOrders(Instant before) {",
+          "callsOut": [
+            {
+              "targetService": "order",
+              "targetServiceId": "order"
+            }
+          ],
+          "callsMethods": [],
+          "callsBeanMethods": [
+            {
+              "beanVariable": "orderRepository",
+              "methodName": "findByStatus"
+            }
+          ]
+        },
+        {
+          "name": "archiveOrdersBefore",
+          "className": "OrderService",
+          "signature": "public int archiveOrdersBefore(Instant cutoff) {",
+          "callsOut": [
+            {
+              "targetService": "order",
+              "targetServiceId": "order"
+            }
+          ],
+          "callsMethods": [],
+          "callsBeanMethods": [
+            {
+              "beanVariable": "orderRepository",
+              "methodName": "findAll"
+            }
+          ]
+        },
+        {
           "name": "validate",
           "className": "OrderValidationService",
           "signature": "public ValidationResult validate(OrderValidationRequestedEvent event) {",
@@ -649,12 +856,108 @@
           "callsBeanMethods": []
         },
         {
+          "name": "calculateTotal",
+          "className": "PricingService",
+          "signature": "public BigDecimal calculateTotal(BigDecimal unitPrice, int quantity) {",
+          "callsOut": [],
+          "callsMethods": [
+            "calculateTax"
+          ],
+          "callsBeanMethods": []
+        },
+        {
           "name": "calculateTax",
           "className": "PricingService",
           "signature": "private BigDecimal calculateTax(BigDecimal unitPrice) {",
           "callsOut": [],
           "callsMethods": [],
           "callsBeanMethods": []
+        },
+        {
+          "name": "buildDailySummary",
+          "className": "ReportingService",
+          "signature": "public DailySummaryReport buildDailySummary(Instant dayStart) {",
+          "callsOut": [
+            {
+              "targetService": "order",
+              "targetServiceId": "order"
+            },
+            {
+              "targetService": "pricing",
+              "targetServiceId": "pricing"
+            },
+            {
+              "targetService": "dailysummaryre",
+              "targetServiceId": "dailysummaryre"
+            }
+          ],
+          "callsMethods": [],
+          "callsBeanMethods": [
+            {
+              "beanVariable": "orderRepository",
+              "methodName": "findByStatus"
+            },
+            {
+              "beanVariable": "pricingService",
+              "methodName": "calculateTotal"
+            },
+            {
+              "beanVariable": "DailySummaryReport",
+              "methodName": "builder"
+            }
+          ]
+        },
+        {
+          "name": "publishSummary",
+          "className": "ReportingService",
+          "signature": "public void publishSummary(DailySummaryReport report) {",
+          "callsOut": [
+            {
+              "targetService": "re",
+              "targetServiceId": "re"
+            }
+          ],
+          "callsMethods": [],
+          "callsBeanMethods": [
+            {
+              "beanVariable": "report",
+              "methodName": "getConfirmedOrders"
+            },
+            {
+              "beanVariable": "report",
+              "methodName": "getCancelledOrders"
+            },
+            {
+              "beanVariable": "report",
+              "methodName": "getTotalRevenue"
+            }
+          ]
+        },
+        {
+          "name": "calculateMonthlyRevenue",
+          "className": "ReportingService",
+          "signature": "public BigDecimal calculateMonthlyRevenue(Instant monthStart) {",
+          "callsOut": [
+            {
+              "targetService": "order",
+              "targetServiceId": "order"
+            },
+            {
+              "targetService": "pricing",
+              "targetServiceId": "pricing"
+            }
+          ],
+          "callsMethods": [],
+          "callsBeanMethods": [
+            {
+              "beanVariable": "orderRepository",
+              "methodName": "findByStatus"
+            },
+            {
+              "beanVariable": "pricingService",
+              "methodName": "calculateTotal"
+            }
+          ]
         }
       ],
       "dependsOn": [],
@@ -1071,6 +1374,44 @@
           }
         },
         {
+          "id": "dt:DailySummaryReport",
+          "type": "dataTypeNode",
+          "data": {
+            "label": "DailySummaryReport",
+            "name": "DailySummaryReport",
+            "fields": [
+              {
+                "type": "Instant",
+                "name": "periodStart"
+              },
+              {
+                "type": "Instant",
+                "name": "periodEnd"
+              },
+              {
+                "type": "int",
+                "name": "confirmedOrders"
+              },
+              {
+                "type": "int",
+                "name": "cancelledOrders"
+              },
+              {
+                "type": "BigDecimal",
+                "name": "totalRevenue"
+              }
+            ],
+            "producedBy": [],
+            "consumedBy": [
+              "order-service"
+            ]
+          },
+          "position": {
+            "x": 280,
+            "y": 0
+          }
+        },
+        {
           "id": "dt:OrderResponse",
           "type": "dataTypeNode",
           "data": {
@@ -1120,7 +1461,7 @@
             ]
           },
           "position": {
-            "x": 280,
+            "x": 560,
             "y": 0
           }
         },
@@ -1142,7 +1483,7 @@
             ]
           },
           "position": {
-            "x": 560,
+            "x": 840,
             "y": 0
           }
         },
@@ -1192,8 +1533,8 @@
             "consumedBy": []
           },
           "position": {
-            "x": 840,
-            "y": 0
+            "x": 0,
+            "y": 220
           }
         },
         {
@@ -1239,7 +1580,7 @@
             "consumedBy": []
           },
           "position": {
-            "x": 0,
+            "x": 280,
             "y": 220
           }
         },
@@ -1281,7 +1622,7 @@
             "consumedBy": []
           },
           "position": {
-            "x": 280,
+            "x": 560,
             "y": 220
           }
         },
@@ -1323,7 +1664,7 @@
             ]
           },
           "position": {
-            "x": 560,
+            "x": 840,
             "y": 220
           }
         },
@@ -1369,8 +1710,8 @@
             ]
           },
           "position": {
-            "x": 840,
-            "y": 220
+            "x": 0,
+            "y": 440
           }
         },
         {
@@ -1395,7 +1736,7 @@
             ]
           },
           "position": {
-            "x": 0,
+            "x": 280,
             "y": 440
           }
         },
@@ -1445,7 +1786,7 @@
             "consumedBy": []
           },
           "position": {
-            "x": 280,
+            "x": 560,
             "y": 440
           }
         },
@@ -1479,7 +1820,7 @@
             "consumedBy": []
           },
           "position": {
-            "x": 560,
+            "x": 840,
             "y": 440
           }
         }
@@ -1712,6 +2053,76 @@
           }
         },
         {
+          "id": "fn:order-service:OrderMaintenanceScheduler.cancelExpiredPendingOrders",
+          "type": "functionNode",
+          "data": {
+            "label": "cancelExpiredPendingOrders",
+            "name": "cancelExpiredPendingOrders",
+            "className": "OrderMaintenanceScheduler",
+            "serviceName": "Order Service",
+            "serviceId": "order-service",
+            "signature": "public void cancelExpiredPendingOrders() {",
+            "callsOut": [
+              {
+                "targetService": "order",
+                "targetServiceId": "order"
+              },
+              {
+                "targetService": "notification",
+                "targetServiceId": "notification"
+              }
+            ]
+          },
+          "position": {
+            "x": 2040,
+            "y": 0
+          }
+        },
+        {
+          "id": "fn:order-service:OrderMaintenanceScheduler.generateDailySalesReport",
+          "type": "functionNode",
+          "data": {
+            "label": "generateDailySalesReport",
+            "name": "generateDailySalesReport",
+            "className": "OrderMaintenanceScheduler",
+            "serviceName": "Order Service",
+            "serviceId": "order-service",
+            "signature": "public void generateDailySalesReport() {",
+            "callsOut": [
+              {
+                "targetService": "reporting",
+                "targetServiceId": "reporting"
+              }
+            ]
+          },
+          "position": {
+            "x": 2040,
+            "y": 160
+          }
+        },
+        {
+          "id": "fn:order-service:OrderMaintenanceScheduler.archiveOldOrders",
+          "type": "functionNode",
+          "data": {
+            "label": "archiveOldOrders",
+            "name": "archiveOldOrders",
+            "className": "OrderMaintenanceScheduler",
+            "serviceName": "Order Service",
+            "serviceId": "order-service",
+            "signature": "public void archiveOldOrders() {",
+            "callsOut": [
+              {
+                "targetService": "order",
+                "targetServiceId": "order"
+              }
+            ]
+          },
+          "position": {
+            "x": 2040,
+            "y": 320
+          }
+        },
+        {
           "id": "fn:order-service:CustomerProfileService.validate",
           "type": "functionNode",
           "data": {
@@ -1724,8 +2135,42 @@
             "callsOut": []
           },
           "position": {
-            "x": 2040,
+            "x": 2380,
             "y": 0
+          }
+        },
+        {
+          "id": "fn:order-service:CustomerProfileService.fetchProfile",
+          "type": "functionNode",
+          "data": {
+            "label": "fetchProfile",
+            "name": "fetchProfile",
+            "className": "CustomerProfileService",
+            "serviceName": "Order Service",
+            "serviceId": "order-service",
+            "signature": "public CustomerProfile fetchProfile(String customerId) {",
+            "callsOut": []
+          },
+          "position": {
+            "x": 2380,
+            "y": 160
+          }
+        },
+        {
+          "id": "fn:order-service:CustomerProfileService.CustomerProfile",
+          "type": "functionNode",
+          "data": {
+            "label": "CustomerProfile",
+            "name": "CustomerProfile",
+            "className": "CustomerProfileService",
+            "serviceName": "Order Service",
+            "serviceId": "order-service",
+            "signature": "public record CustomerProfile(String customerId, String email) {",
+            "callsOut": []
+          },
+          "position": {
+            "x": 2380,
+            "y": 320
           }
         },
         {
@@ -1741,8 +2186,8 @@
             "callsOut": []
           },
           "position": {
-            "x": 2040,
-            "y": 160
+            "x": 2380,
+            "y": 480
           }
         },
         {
@@ -1763,8 +2208,8 @@
             ]
           },
           "position": {
-            "x": 2040,
-            "y": 320
+            "x": 2380,
+            "y": 640
           }
         },
         {
@@ -1780,8 +2225,8 @@
             "callsOut": []
           },
           "position": {
-            "x": 2040,
-            "y": 480
+            "x": 2380,
+            "y": 800
           }
         },
         {
@@ -1797,7 +2242,7 @@
             "callsOut": []
           },
           "position": {
-            "x": 2380,
+            "x": 2720,
             "y": 0
           }
         },
@@ -1819,7 +2264,7 @@
             ]
           },
           "position": {
-            "x": 2380,
+            "x": 2720,
             "y": 160
           }
         },
@@ -1836,7 +2281,7 @@
             "callsOut": []
           },
           "position": {
-            "x": 2380,
+            "x": 2720,
             "y": 320
           }
         },
@@ -1853,8 +2298,74 @@
             "callsOut": []
           },
           "position": {
-            "x": 2380,
+            "x": 2720,
             "y": 480
+          }
+        },
+        {
+          "id": "fn:order-service:NotificationService.sendOrderConfirmationEmail",
+          "type": "functionNode",
+          "data": {
+            "label": "sendOrderConfirmationEmail",
+            "name": "sendOrderConfirmationEmail",
+            "className": "NotificationService",
+            "serviceName": "Order Service",
+            "serviceId": "order-service",
+            "signature": "public void sendOrderConfirmationEmail(UUID orderId, String customerId) {",
+            "callsOut": [
+              {
+                "targetService": "customerprofile",
+                "targetServiceId": "customerprofile"
+              }
+            ]
+          },
+          "position": {
+            "x": 3060,
+            "y": 0
+          }
+        },
+        {
+          "id": "fn:order-service:NotificationService.sendOrderCancellationNotice",
+          "type": "functionNode",
+          "data": {
+            "label": "sendOrderCancellationNotice",
+            "name": "sendOrderCancellationNotice",
+            "className": "NotificationService",
+            "serviceName": "Order Service",
+            "serviceId": "order-service",
+            "signature": "public void sendOrderCancellationNotice(UUID orderId, String customerId) {",
+            "callsOut": [
+              {
+                "targetService": "customerprofile",
+                "targetServiceId": "customerprofile"
+              }
+            ]
+          },
+          "position": {
+            "x": 3060,
+            "y": 160
+          }
+        },
+        {
+          "id": "fn:order-service:NotificationService.sendFraudAlert",
+          "type": "functionNode",
+          "data": {
+            "label": "sendFraudAlert",
+            "name": "sendFraudAlert",
+            "className": "NotificationService",
+            "serviceName": "Order Service",
+            "serviceId": "order-service",
+            "signature": "public void sendFraudAlert(UUID orderId, String customerId) {",
+            "callsOut": [
+              {
+                "targetService": "customerprofile",
+                "targetServiceId": "customerprofile"
+              }
+            ]
+          },
+          "position": {
+            "x": 3060,
+            "y": 320
           }
         },
         {
@@ -1875,7 +2386,7 @@
             ]
           },
           "position": {
-            "x": 2720,
+            "x": 3400,
             "y": 0
           }
         },
@@ -1897,7 +2408,7 @@
             ]
           },
           "position": {
-            "x": 2720,
+            "x": 3400,
             "y": 160
           }
         },
@@ -1919,7 +2430,7 @@
             ]
           },
           "position": {
-            "x": 2720,
+            "x": 3400,
             "y": 320
           }
         },
@@ -1941,8 +2452,52 @@
             ]
           },
           "position": {
-            "x": 2720,
+            "x": 3400,
             "y": 480
+          }
+        },
+        {
+          "id": "fn:order-service:OrderService.findExpiredPendingOrders",
+          "type": "functionNode",
+          "data": {
+            "label": "findExpiredPendingOrders",
+            "name": "findExpiredPendingOrders",
+            "className": "OrderService",
+            "serviceName": "Order Service",
+            "serviceId": "order-service",
+            "signature": "public List<Order> findExpiredPendingOrders(Instant before) {",
+            "callsOut": [
+              {
+                "targetService": "order",
+                "targetServiceId": "order"
+              }
+            ]
+          },
+          "position": {
+            "x": 3400,
+            "y": 640
+          }
+        },
+        {
+          "id": "fn:order-service:OrderService.archiveOrdersBefore",
+          "type": "functionNode",
+          "data": {
+            "label": "archiveOrdersBefore",
+            "name": "archiveOrdersBefore",
+            "className": "OrderService",
+            "serviceName": "Order Service",
+            "serviceId": "order-service",
+            "signature": "public int archiveOrdersBefore(Instant cutoff) {",
+            "callsOut": [
+              {
+                "targetService": "order",
+                "targetServiceId": "order"
+              }
+            ]
+          },
+          "position": {
+            "x": 3400,
+            "y": 800
           }
         },
         {
@@ -1971,7 +2526,7 @@
             ]
           },
           "position": {
-            "x": 3060,
+            "x": 3740,
             "y": 0
           }
         },
@@ -1988,7 +2543,7 @@
             "callsOut": []
           },
           "position": {
-            "x": 3060,
+            "x": 3740,
             "y": 160
           }
         },
@@ -2005,7 +2560,7 @@
             "callsOut": []
           },
           "position": {
-            "x": 3400,
+            "x": 4080,
             "y": 0
           }
         },
@@ -2022,8 +2577,25 @@
             "callsOut": []
           },
           "position": {
-            "x": 3400,
+            "x": 4080,
             "y": 160
+          }
+        },
+        {
+          "id": "fn:order-service:PricingService.calculateTotal",
+          "type": "functionNode",
+          "data": {
+            "label": "calculateTotal",
+            "name": "calculateTotal",
+            "className": "PricingService",
+            "serviceName": "Order Service",
+            "serviceId": "order-service",
+            "signature": "public BigDecimal calculateTotal(BigDecimal unitPrice, int quantity) {",
+            "callsOut": []
+          },
+          "position": {
+            "x": 4080,
+            "y": 320
           }
         },
         {
@@ -2039,7 +2611,85 @@
             "callsOut": []
           },
           "position": {
-            "x": 3400,
+            "x": 4080,
+            "y": 480
+          }
+        },
+        {
+          "id": "fn:order-service:ReportingService.buildDailySummary",
+          "type": "functionNode",
+          "data": {
+            "label": "buildDailySummary",
+            "name": "buildDailySummary",
+            "className": "ReportingService",
+            "serviceName": "Order Service",
+            "serviceId": "order-service",
+            "signature": "public DailySummaryReport buildDailySummary(Instant dayStart) {",
+            "callsOut": [
+              {
+                "targetService": "order",
+                "targetServiceId": "order"
+              },
+              {
+                "targetService": "pricing",
+                "targetServiceId": "pricing"
+              },
+              {
+                "targetService": "dailysummaryre",
+                "targetServiceId": "dailysummaryre"
+              }
+            ]
+          },
+          "position": {
+            "x": 4420,
+            "y": 0
+          }
+        },
+        {
+          "id": "fn:order-service:ReportingService.publishSummary",
+          "type": "functionNode",
+          "data": {
+            "label": "publishSummary",
+            "name": "publishSummary",
+            "className": "ReportingService",
+            "serviceName": "Order Service",
+            "serviceId": "order-service",
+            "signature": "public void publishSummary(DailySummaryReport report) {",
+            "callsOut": [
+              {
+                "targetService": "re",
+                "targetServiceId": "re"
+              }
+            ]
+          },
+          "position": {
+            "x": 4420,
+            "y": 160
+          }
+        },
+        {
+          "id": "fn:order-service:ReportingService.calculateMonthlyRevenue",
+          "type": "functionNode",
+          "data": {
+            "label": "calculateMonthlyRevenue",
+            "name": "calculateMonthlyRevenue",
+            "className": "ReportingService",
+            "serviceName": "Order Service",
+            "serviceId": "order-service",
+            "signature": "public BigDecimal calculateMonthlyRevenue(Instant monthStart) {",
+            "callsOut": [
+              {
+                "targetService": "order",
+                "targetServiceId": "order"
+              },
+              {
+                "targetService": "pricing",
+                "targetServiceId": "pricing"
+              }
+            ]
+          },
+          "position": {
+            "x": 4420,
             "y": 320
           }
         },
@@ -2056,7 +2706,7 @@
             "callsOut": []
           },
           "position": {
-            "x": 3740,
+            "x": 4760,
             "y": 0
           }
         },
@@ -2073,7 +2723,7 @@
             "callsOut": []
           },
           "position": {
-            "x": 4080,
+            "x": 5100,
             "y": 0
           }
         },
@@ -2095,7 +2745,7 @@
             ]
           },
           "position": {
-            "x": 4420,
+            "x": 5440,
             "y": 0
           }
         },
@@ -2117,7 +2767,7 @@
             ]
           },
           "position": {
-            "x": 4760,
+            "x": 5780,
             "y": 0
           }
         },
@@ -2143,7 +2793,7 @@
             ]
           },
           "position": {
-            "x": 4760,
+            "x": 5780,
             "y": 160
           }
         }
@@ -2206,6 +2856,48 @@
           "animated": false
         },
         {
+          "id": "fn:order-service:OrderMaintenanceScheduler.cancelExpiredPendingOrders→fn:order-service:OrderService.findExpiredPendingOrders",
+          "source": "fn:order-service:OrderMaintenanceScheduler.cancelExpiredPendingOrders",
+          "target": "fn:order-service:OrderService.findExpiredPendingOrders",
+          "label": "orderService",
+          "animated": false
+        },
+        {
+          "id": "fn:order-service:OrderMaintenanceScheduler.cancelExpiredPendingOrders→fn:order-service:OrderService.rejectOrder",
+          "source": "fn:order-service:OrderMaintenanceScheduler.cancelExpiredPendingOrders",
+          "target": "fn:order-service:OrderService.rejectOrder",
+          "label": "orderService",
+          "animated": false
+        },
+        {
+          "id": "fn:order-service:OrderMaintenanceScheduler.cancelExpiredPendingOrders→fn:order-service:NotificationService.sendOrderCancellationNotice",
+          "source": "fn:order-service:OrderMaintenanceScheduler.cancelExpiredPendingOrders",
+          "target": "fn:order-service:NotificationService.sendOrderCancellationNotice",
+          "label": "notificationService",
+          "animated": false
+        },
+        {
+          "id": "fn:order-service:OrderMaintenanceScheduler.generateDailySalesReport→fn:order-service:ReportingService.buildDailySummary",
+          "source": "fn:order-service:OrderMaintenanceScheduler.generateDailySalesReport",
+          "target": "fn:order-service:ReportingService.buildDailySummary",
+          "label": "reportingService",
+          "animated": false
+        },
+        {
+          "id": "fn:order-service:OrderMaintenanceScheduler.generateDailySalesReport→fn:order-service:ReportingService.publishSummary",
+          "source": "fn:order-service:OrderMaintenanceScheduler.generateDailySalesReport",
+          "target": "fn:order-service:ReportingService.publishSummary",
+          "label": "reportingService",
+          "animated": false
+        },
+        {
+          "id": "fn:order-service:OrderMaintenanceScheduler.archiveOldOrders→fn:order-service:OrderService.archiveOrdersBefore",
+          "source": "fn:order-service:OrderMaintenanceScheduler.archiveOldOrders",
+          "target": "fn:order-service:OrderService.archiveOrdersBefore",
+          "label": "orderService",
+          "animated": false
+        },
+        {
           "id": "fn:order-service:CustomerProfileService.validate→fn:order-service:CustomerProfileService.checkBlacklist",
           "source": "fn:order-service:CustomerProfileService.validate",
           "target": "fn:order-service:CustomerProfileService.checkBlacklist",
@@ -2223,6 +2915,13 @@
           "id": "fn:order-service:CustomerProfileService.validate→fn:order-service:CustomerProfileService.checkOrderValueLimit",
           "source": "fn:order-service:CustomerProfileService.validate",
           "target": "fn:order-service:CustomerProfileService.checkOrderValueLimit",
+          "label": "calls",
+          "animated": false
+        },
+        {
+          "id": "fn:order-service:CustomerProfileService.fetchProfile→fn:order-service:CustomerProfileService.CustomerProfile",
+          "source": "fn:order-service:CustomerProfileService.fetchProfile",
+          "target": "fn:order-service:CustomerProfileService.CustomerProfile",
           "label": "calls",
           "animated": false
         },
@@ -2248,6 +2947,27 @@
           "animated": false
         },
         {
+          "id": "fn:order-service:NotificationService.sendOrderConfirmationEmail→fn:order-service:CustomerProfileService.fetchProfile",
+          "source": "fn:order-service:NotificationService.sendOrderConfirmationEmail",
+          "target": "fn:order-service:CustomerProfileService.fetchProfile",
+          "label": "customerProfileService",
+          "animated": false
+        },
+        {
+          "id": "fn:order-service:NotificationService.sendOrderCancellationNotice→fn:order-service:CustomerProfileService.fetchProfile",
+          "source": "fn:order-service:NotificationService.sendOrderCancellationNotice",
+          "target": "fn:order-service:CustomerProfileService.fetchProfile",
+          "label": "customerProfileService",
+          "animated": false
+        },
+        {
+          "id": "fn:order-service:NotificationService.sendFraudAlert→fn:order-service:CustomerProfileService.fetchProfile",
+          "source": "fn:order-service:NotificationService.sendFraudAlert",
+          "target": "fn:order-service:CustomerProfileService.fetchProfile",
+          "label": "customerProfileService",
+          "animated": false
+        },
+        {
           "id": "fn:order-service:OrderValidationService.validate→fn:order-service:OrderValidationService.resolveCustomerOutcome",
           "source": "fn:order-service:OrderValidationService.validate",
           "target": "fn:order-service:OrderValidationService.resolveCustomerOutcome",
@@ -2266,6 +2986,27 @@
           "source": "fn:order-service:OrderValidationService.validate",
           "target": "fn:order-service:CustomerProfileService.validate",
           "label": "customerProfileService",
+          "animated": false
+        },
+        {
+          "id": "fn:order-service:PricingService.calculateTotal→fn:order-service:PricingService.calculateTax",
+          "source": "fn:order-service:PricingService.calculateTotal",
+          "target": "fn:order-service:PricingService.calculateTax",
+          "label": "calls",
+          "animated": false
+        },
+        {
+          "id": "fn:order-service:ReportingService.buildDailySummary→fn:order-service:PricingService.calculateTotal",
+          "source": "fn:order-service:ReportingService.buildDailySummary",
+          "target": "fn:order-service:PricingService.calculateTotal",
+          "label": "pricingService",
+          "animated": false
+        },
+        {
+          "id": "fn:order-service:ReportingService.calculateMonthlyRevenue→fn:order-service:PricingService.calculateTotal",
+          "source": "fn:order-service:ReportingService.calculateMonthlyRevenue",
+          "target": "fn:order-service:PricingService.calculateTotal",
+          "label": "pricingService",
           "animated": false
         },
         {
