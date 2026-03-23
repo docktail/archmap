@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-23T05:07:54.782Z",
+  "generatedAt": "2026-03-23T10:29:05.396Z",
   "meta": {
     "org": "docktail",
     "repoCount": 2,
@@ -191,6 +191,39 @@
           "consumedBy": []
         },
         {
+          "name": "OrderStatus",
+          "fields": [
+            {
+              "name": "PENDING",
+              "type": "enum constant"
+            },
+            {
+              "name": "CONFIRMED",
+              "type": "enum constant"
+            },
+            {
+              "name": "PROCESSING",
+              "type": "enum constant"
+            },
+            {
+              "name": "SHIPPED",
+              "type": "enum constant"
+            },
+            {
+              "name": "DELIVERED",
+              "type": "enum constant"
+            },
+            {
+              "name": "CANCELLED",
+              "type": "enum constant"
+            }
+          ],
+          "producedBy": [],
+          "consumedBy": [
+            "order-service"
+          ]
+        },
+        {
           "name": "OrderCreatedEvent",
           "fields": [
             {
@@ -259,6 +292,39 @@
             "order-service"
           ],
           "consumedBy": []
+        },
+        {
+          "name": "ValidationOutcome",
+          "fields": [
+            {
+              "name": "PASSED",
+              "type": "enum constant"
+            },
+            {
+              "name": "FAILED_FRAUD",
+              "type": "enum constant"
+            },
+            {
+              "name": "FAILED_CUSTOMER_LIMIT",
+              "type": "enum constant"
+            },
+            {
+              "name": "FAILED_CREDIT",
+              "type": "enum constant"
+            },
+            {
+              "name": "FAILED_BLACKLIST",
+              "type": "enum constant"
+            },
+            {
+              "name": "FAILED_PRICING",
+              "type": "enum constant"
+            }
+          ],
+          "producedBy": [],
+          "consumedBy": [
+            "order-service"
+          ]
         },
         {
           "name": "ValidationResult",
@@ -1086,6 +1152,31 @@
           "consumedBy": []
         },
         {
+          "name": "ReservationStatus",
+          "fields": [
+            {
+              "name": "RESERVED",
+              "type": "enum constant"
+            },
+            {
+              "name": "INSUFFICIENT_STOCK",
+              "type": "enum constant"
+            },
+            {
+              "name": "RELEASED",
+              "type": "enum constant"
+            },
+            {
+              "name": "FULFILLED",
+              "type": "enum constant"
+            }
+          ],
+          "producedBy": [],
+          "consumedBy": [
+            "inventory-service"
+          ]
+        },
+        {
           "name": "StockLevel",
           "fields": [
             {
@@ -1407,7 +1498,7 @@
             ]
           },
           "position": {
-            "x": 280,
+            "x": 320,
             "y": 0
           }
         },
@@ -1461,7 +1552,7 @@
             ]
           },
           "position": {
-            "x": 560,
+            "x": 640,
             "y": 0
           }
         },
@@ -1483,7 +1574,7 @@
             ]
           },
           "position": {
-            "x": 840,
+            "x": 960,
             "y": 0
           }
         },
@@ -1534,7 +1625,49 @@
           },
           "position": {
             "x": 0,
-            "y": 220
+            "y": 300
+          }
+        },
+        {
+          "id": "dt:OrderStatus",
+          "type": "dataTypeNode",
+          "data": {
+            "label": "OrderStatus",
+            "name": "OrderStatus",
+            "fields": [
+              {
+                "name": "PENDING",
+                "type": "enum constant"
+              },
+              {
+                "name": "CONFIRMED",
+                "type": "enum constant"
+              },
+              {
+                "name": "PROCESSING",
+                "type": "enum constant"
+              },
+              {
+                "name": "SHIPPED",
+                "type": "enum constant"
+              },
+              {
+                "name": "DELIVERED",
+                "type": "enum constant"
+              },
+              {
+                "name": "CANCELLED",
+                "type": "enum constant"
+              }
+            ],
+            "producedBy": [],
+            "consumedBy": [
+              "order-service"
+            ]
+          },
+          "position": {
+            "x": 320,
+            "y": 300
           }
         },
         {
@@ -1580,8 +1713,8 @@
             "consumedBy": []
           },
           "position": {
-            "x": 280,
-            "y": 220
+            "x": 640,
+            "y": 300
           }
         },
         {
@@ -1622,8 +1755,50 @@
             "consumedBy": []
           },
           "position": {
-            "x": 560,
-            "y": 220
+            "x": 960,
+            "y": 300
+          }
+        },
+        {
+          "id": "dt:ValidationOutcome",
+          "type": "dataTypeNode",
+          "data": {
+            "label": "ValidationOutcome",
+            "name": "ValidationOutcome",
+            "fields": [
+              {
+                "name": "PASSED",
+                "type": "enum constant"
+              },
+              {
+                "name": "FAILED_FRAUD",
+                "type": "enum constant"
+              },
+              {
+                "name": "FAILED_CUSTOMER_LIMIT",
+                "type": "enum constant"
+              },
+              {
+                "name": "FAILED_CREDIT",
+                "type": "enum constant"
+              },
+              {
+                "name": "FAILED_BLACKLIST",
+                "type": "enum constant"
+              },
+              {
+                "name": "FAILED_PRICING",
+                "type": "enum constant"
+              }
+            ],
+            "producedBy": [],
+            "consumedBy": [
+              "order-service"
+            ]
+          },
+          "position": {
+            "x": 0,
+            "y": 600
           }
         },
         {
@@ -1664,8 +1839,8 @@
             ]
           },
           "position": {
-            "x": 840,
-            "y": 220
+            "x": 320,
+            "y": 600
           }
         },
         {
@@ -1710,8 +1885,8 @@
             ]
           },
           "position": {
-            "x": 0,
-            "y": 440
+            "x": 640,
+            "y": 600
           }
         },
         {
@@ -1736,8 +1911,8 @@
             ]
           },
           "position": {
-            "x": 280,
-            "y": 440
+            "x": 960,
+            "y": 600
           }
         },
         {
@@ -1786,8 +1961,42 @@
             "consumedBy": []
           },
           "position": {
-            "x": 560,
-            "y": 440
+            "x": 0,
+            "y": 900
+          }
+        },
+        {
+          "id": "dt:ReservationStatus",
+          "type": "dataTypeNode",
+          "data": {
+            "label": "ReservationStatus",
+            "name": "ReservationStatus",
+            "fields": [
+              {
+                "name": "RESERVED",
+                "type": "enum constant"
+              },
+              {
+                "name": "INSUFFICIENT_STOCK",
+                "type": "enum constant"
+              },
+              {
+                "name": "RELEASED",
+                "type": "enum constant"
+              },
+              {
+                "name": "FULFILLED",
+                "type": "enum constant"
+              }
+            ],
+            "producedBy": [],
+            "consumedBy": [
+              "inventory-service"
+            ]
+          },
+          "position": {
+            "x": 320,
+            "y": 900
           }
         },
         {
@@ -1820,12 +2029,61 @@
             "consumedBy": []
           },
           "position": {
-            "x": 840,
-            "y": 440
+            "x": 640,
+            "y": 900
           }
         }
       ],
-      "edges": []
+      "edges": [
+        {
+          "id": "ref:OrderResponse→OrderStatus",
+          "source": "dt:OrderResponse",
+          "target": "dt:OrderStatus",
+          "label": "status",
+          "animated": false,
+          "markerEnd": "arrow"
+        },
+        {
+          "id": "ref:UpdateOrderStatusRequest→OrderStatus",
+          "source": "dt:UpdateOrderStatusRequest",
+          "target": "dt:OrderStatus",
+          "label": "status",
+          "animated": false,
+          "markerEnd": "arrow"
+        },
+        {
+          "id": "ref:Order→OrderStatus",
+          "source": "dt:Order",
+          "target": "dt:OrderStatus",
+          "label": "status",
+          "animated": false,
+          "markerEnd": "arrow"
+        },
+        {
+          "id": "ref:ValidationResult→ValidationOutcome",
+          "source": "dt:ValidationResult",
+          "target": "dt:ValidationOutcome",
+          "label": "outcome",
+          "animated": false,
+          "markerEnd": "arrow"
+        },
+        {
+          "id": "ref:ReservationResult→ReservationStatus",
+          "source": "dt:ReservationResult",
+          "target": "dt:ReservationStatus",
+          "label": "status",
+          "animated": false,
+          "markerEnd": "arrow"
+        },
+        {
+          "id": "ref:InventoryReservation→ReservationStatus",
+          "source": "dt:InventoryReservation",
+          "target": "dt:ReservationStatus",
+          "label": "status",
+          "animated": false,
+          "markerEnd": "arrow"
+        }
+      ]
     },
     "functionFlow": {
       "nodes": [
